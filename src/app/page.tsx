@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import ImageCard from "@/components/ImageCard";
 import Modal from "@/components/Modal";
+import { searchImages } from "@/utils/unsplash";
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
@@ -18,7 +19,23 @@ export default function HomePage() {
   }, [page]);
 
   const fetchImages = async () => {
-    console.log("Fetch Images")
+    setIsLoading(true);
+    try {
+      const data = await searchImages(query, page);
+      if (page === 1) {
+        setImages(data.results);
+      } else {
+        setImages((prev) => {
+          const ids = new Set(prev.map((img) => img.id));
+          const filtered = data.results.filter((img: any) => !ids.has(img.id));
+          return [...prev, ...filtered];
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -55,7 +72,7 @@ export default function HomePage() {
       </div>
 
       {isLoading && <p className="text-center mt-4">Loading...</p>}
-
+      
       <Modal
         isOpen={!!selectedImage}
         onClose={() => setSelectedImage(null)}
