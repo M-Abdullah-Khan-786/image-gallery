@@ -11,6 +11,7 @@ export default function HomePage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     if (page === 1) return;
@@ -31,6 +32,7 @@ export default function HomePage() {
           return [...prev, ...filtered];
         });
       }
+      setHasMore(data.results.length > 0);
     } catch (err) {
       console.error(err);
     } finally {
@@ -43,6 +45,10 @@ export default function HomePage() {
     setPage(1);
     setImages([]);
     fetchImages();
+  };
+
+  const handleLoadMore = () => {
+    if (hasMore) setPage((prev) => prev + 1);
   };
 
   return (
@@ -72,7 +78,18 @@ export default function HomePage() {
       </div>
 
       {isLoading && <p className="text-center mt-4">Loading...</p>}
-      
+
+      {hasMore && !isLoading && images.length > 0 && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={handleLoadMore}
+            className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800"
+          >
+            Load More
+          </button>
+        </div>
+      )}
+
       <Modal
         isOpen={!!selectedImage}
         onClose={() => setSelectedImage(null)}
