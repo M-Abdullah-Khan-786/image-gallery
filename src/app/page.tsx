@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ImageCard from "@/components/ImageCard";
 import Modal from "@/components/Modal";
 import { searchImages } from "@/utils/unsplash";
+import Loading from "@/components/Loading";
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
@@ -77,13 +78,13 @@ export default function HomePage() {
         ))}
       </div>
 
-      {isLoading && <p className="text-center mt-4">Loading...</p>}
+      {isLoading && <Loading />}
 
       {hasMore && !isLoading && images.length > 0 && (
         <div className="flex justify-center mt-6">
           <button
             onClick={handleLoadMore}
-            className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800"
+            className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 cursor-pointer"
           >
             Load More
           </button>
